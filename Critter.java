@@ -52,6 +52,54 @@ public abstract class Critter {
 	private int y_coord;
 	
 	protected final void walk(int direction) {
+		if(this.hasMoved){
+			this.energy -= Params.walk_energy_cost;
+			return;
+		}
+		switch(direction){
+		case 0 :
+			x_coord = (x_coord + 1) % Params.world_width;
+		case 1 : 
+			x_coord = (x_coord + 1) % Params.world_width;
+			y_coord = (y_coord - 1);
+			if(y_coord < 0){
+				y_coord = Params.world_height - 1;
+			}
+		case 2 :
+			y_coord = (y_coord - 1);
+			if(y_coord < 0){
+				y_coord = Params.world_height - 1;
+			}
+		case 3 :
+			x_coord = (x_coord - 1);
+			if(x_coord < 0){
+				x_coord = Params.world_width - 1;
+			}
+			y_coord = (y_coord - 1);
+			if(y_coord < 0){
+				y_coord = Params.world_height - 1;
+			}
+		case 4 :
+			x_coord = (x_coord - 1);
+			if(x_coord < 0){
+				x_coord = Params.world_width - 1;
+			}
+		case 5 :
+			x_coord = (x_coord - 1);
+			if(x_coord < 0){
+				x_coord = Params.world_width - 1;
+			}
+			y_coord = (y_coord + 1) % Params.world_height;
+		case 6 :
+			y_coord = (y_coord + 1) % Params.world_height;
+		case 7 :
+			x_coord = (x_coord + 1) % Params.world_width;
+			y_coord = (y_coord + 1) % Params.world_height;
+		default : 
+			x_coord = x_coord;
+			y_coord = y_coord;
+		}
+		energy -= Params.walk_energy_cost;
 	}
 	
 	protected final void run(int direction) {
