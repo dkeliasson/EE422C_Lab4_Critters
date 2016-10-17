@@ -120,6 +120,36 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+		/* Creating class template for a Class of critters */
+		Class<?> Bug;
+		/* Attempt to initialize class, if not found throw exception */
+		try{
+			Bug = Class.forName(critter_class_name);
+		}catch(ClassNotFoundException e){
+			throw new InvalidCritterException(critter_class_name);
+		}
+		/* Declaring constructor */
+		Constructor<?> construct = null;
+		/* Declare object to setup */
+		Object instanceofBug = null;
+		/* Attempt to get constructor, else throw exception */
+		try{
+			construct = Bug.getConstructor();
+		}catch (NoSuchMethodException | SecurityException e){
+			e.printStackTrace();
+		}
+		/* Attempt to construct the object */
+		try{
+			instanceofBug = construct.newInstance();
+		}catch (IllegalAccessException |  InstantiationException |  IllegalArgumentException |  InvocationTargetException e){
+			e.printStackTrace();
+		}
+		
+		Critter crit = (Critter)instanceofBug;
+		crit.x_coord = getRandomInt(Params.world_width - 1);
+		crit.y_coord = getRandomInt(Params.world_height - 1);
+		crit.energy = Params.start_energy;
+		population.add(crit);
 	}
 	
 	/**
