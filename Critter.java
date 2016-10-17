@@ -25,6 +25,7 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 	private static ArrayList[][] ourworld = new ArrayList[Params.world_height][Params.world_width];
+	private boolean hasMoved = false;
 
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
