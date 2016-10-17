@@ -53,7 +53,54 @@ public abstract class Critter {
 	}
 	
 	protected final void run(int direction) {
-		
+		if(this.hasMoved){
+			this.energy -= Params.run_energy_cost;
+			return;
+		}
+		switch(direction){
+		case 0 :
+			x_coord = (x_coord + 2) % Params.world_width;
+		case 1 : 
+			x_coord = (x_coord + 2) % Params.world_width;
+			y_coord = (y_coord - 2);
+			if(y_coord < 0){
+				y_coord = Params.world_height - 2;
+			}
+		case 2 :
+			y_coord = (y_coord - 2);
+			if(y_coord < 0){
+				y_coord = Params.world_height - 2;
+			}
+		case 3 :
+			x_coord = (x_coord - 2);
+			if(x_coord < 0){
+				x_coord = Params.world_width - 2;
+			}
+			y_coord = (y_coord - 2);
+			if(y_coord < 0){
+				y_coord = Params.world_height - 2;
+			}
+		case 4 :
+			x_coord = (x_coord - 2);
+			if(x_coord < 0){
+				x_coord = Params.world_width - 2;
+			}
+		case 5 :
+			x_coord = (x_coord - 2);
+			if(x_coord < 0){
+				x_coord = Params.world_width - 2;
+			}
+			y_coord = (y_coord + 2) % Params.world_height;
+		case 6 :
+			y_coord = (y_coord + 2) % Params.world_height;
+		case 7 :
+			x_coord = (x_coord + 2) % Params.world_width;
+			y_coord = (y_coord + 2) % Params.world_height;
+		default : 
+			x_coord = x_coord;
+			y_coord = y_coord;
+		}
+		energy -= Params.run_energy_cost;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
