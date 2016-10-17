@@ -88,19 +88,20 @@ public class Main {
         	 */
         	
         	System.out.println("critters> ");
+        	
         	/* Get input */
-        	String input = kb.nextLine();
+        	String[] input = kb.nextLine().trim().split(" ");
+        	
         	/* Decide what to do */
-        	switch(input){
+        	switch(input[0]){
         	case quit : 
         		System.exit(0);
         	case show : 
         		Critter.displayWorld();
         	case step :
-        		boolean steps = kb.hasNext();
-        		if(steps){
-        			int step = kb.nextInt();
-        			for(int i = 0; i < step; i++){
+        		if(input.length > 1){
+        			int steps = Integer.parseInt(input[1]);
+        			for(int i = 0; i < steps; i++){
         				Critter.worldTimeStep();
         			}
         		}
@@ -108,25 +109,21 @@ public class Main {
         			Critter.worldTimeStep();
         		}
         	case seed :
-        		long random = kb.nextLong();
+        		long random = Long.parseLong(input[1]);
         		Critter.setSeed(random);
         	case make :
-        		ArrayList<String> names= new ArrayList<String>();
-        		boolean check = kb.hasNext();
-        		if(check){
-        			String name = kb.next();
-        			names.add(name);
+        		if(input.length == 2){
         			try{
-        				Critter.makeCritter(name);
+        				Critter.makeCritter(input[1]);
         			}catch (InvalidCritterException e){
         				e.printStackTrace();
         			}
         		}
-        		check = kb.hasNext();
-        		if(check){       			
-        			for(int count = kb.nextInt(); count != 1; count--){
+        		else if(input.length == 3){
+        			int value = Integer.parseInt(input[2]);
+        			for(int count = 0; count < value; count++){
         				try{
-            				Critter.makeCritter(names.get(0));
+            				Critter.makeCritter(input[1]);
             			}catch (InvalidCritterException e){
             				e.printStackTrace();
             			}
