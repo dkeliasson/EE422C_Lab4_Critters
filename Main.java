@@ -11,7 +11,7 @@
  * Fall 2016
  */
 package assignment4; // cannot be in default package
-import java.util.Scanner;
+import java.util.*;
 import java.io.*;
 
 
@@ -29,6 +29,13 @@ public class Main {
     private static boolean DEBUG = false; // Use it or not, as you wish!
     static PrintStream old = System.out;	// if you want to restore output to console
 
+    /* Preprocessor Directives */
+    private static final String quit = "quit";
+    private static final String show = "show";
+    private static final String step = "step";
+    private static final String seed = "seed";
+    private static final String make = "make";
+    private static final String stats = "stats";
 
     // Gets the package name.  The usage assumes that Critter and its subclasses are all in the same package.
     static {
@@ -68,6 +75,70 @@ public class Main {
 
         /* Do not alter the code above for your submission. */
         /* Write your code below. */
+        
+        while(true){
+        	/**
+        	 * Commands:
+        	 * 		quit
+        	 * 		show
+        	 * 		seed
+        	 * 		step
+        	 * 		make
+        	 * 		stats	
+        	 */
+        	
+        	System.out.println("critters> ");
+        	/* Get input */
+        	String input = kb.nextLine();
+        	/* Decide what to do */
+        	switch(input){
+        	case quit : 
+        		System.exit(0);
+        	case show : 
+        		Critter.displayWorld();
+        	case step :
+        		boolean steps = kb.hasNext();
+        		if(steps){
+        			int step = kb.nextInt();
+        			for(int i = 0; i < step; i++){
+        				Critter.worldTimeStep();
+        			}
+        		}
+        		else{
+        			Critter.worldTimeStep();
+        		}
+        	case seed :
+        		long random = kb.nextLong();
+        		Critter.setSeed(random);
+        	case make :
+        		ArrayList<String> names= new ArrayList<String>();
+        		boolean check = kb.hasNext();
+        		if(check){
+        			String name = kb.next();
+        			names.add(name);
+        			try{
+        				Critter.makeCritter(name);
+        			}catch (InvalidCritterException e){
+        				e.printStackTrace();
+        			}
+        		}
+        		check = kb.hasNext();
+        		if(check){       			
+        			for(int count = kb.nextInt(); count != 1; count--){
+        				try{
+            				Critter.makeCritter(names.get(0));
+            			}catch (InvalidCritterException e){
+            				e.printStackTrace();
+            			}
+        			}
+        		}
+        	case stats :
+        		
+        	default :
+        		
+        	}
+        	
+        }
         
         System.out.println("GLHF");
         
