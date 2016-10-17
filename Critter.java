@@ -249,5 +249,54 @@ public abstract class Critter {
 	public static void worldTimeStep() {
 	}
 	
-	public static void displayWorld() {}
+	@SuppressWarnings("unchecked")
+	private static void constructWorld(){
+		/* Construct a large 2D world made up of arraylists at each coordinate */
+		for(int row = 0; row < Params.world_height; row++){
+			for(int col = 0; col < Params.world_width; col++){
+				ourworld[row][col] = new ArrayList<Critter>();
+			}
+		}
+		/* Populate this world with the little critters */
+		int i = 0;
+		while(i < population.size()){
+			ourworld[population.get(i).y_coord][population.get(i).x_coord].add(population.get(i));
+		}
+	}
+	
+	public static void displayWorld() {
+		createBorder();
+		constructWorld();
+		for (int col = 1; col < Params.world_width; col++){
+			for(int row = 1; row < Params.world_height; row++){
+				/* If population array is empty means no critter to print */
+				if (ourworld[row][col].size() == 0){
+					System.out.print(" ");
+				}
+				/* Critter availabe so print the first critter in array */
+				else{
+					System.out.print(ourworld[row][col].get(0).toString());
+				}
+			}	
+		}
+	}
+	
+	
+	private static void createBorder() {
+		for(int col = 0; col < Params.world_width + 2; col++){
+			for(int row = 0; row < Params.world_height + 2; row++){
+				if((col == 0 && row == 0) || ((col == Params.world_width + 1) && row == 0) || (col == 0 && row == Params.world_height + 1) || (col == Params.world_width + 1 && row == Params.world_height + 1)){
+				System.out.println("+");
+				}
+				else if(row == 0 || row == Params.world_height + 1){
+					System.out.println("-");
+				}
+				else if(col == 0 || col == Params.world_width + 1){
+					System.out.println("|");
+				}
+				else{}
+			}
+		}
+	}
+	
 }
