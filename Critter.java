@@ -105,6 +105,60 @@ public abstract class Critter {
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
+		/* Check for reproduction energy and return if critter can't have little babies */
+		if(this.energy < Params.min_reproduce_energy){ return; }
+		else{
+			double small_energy = offspring.energy = (this.energy)/2;
+			offspring.energy = (int) Math.floor(small_energy);
+			/* Half parents energy (rounding up) */
+			double big_energy = (this.energy)/2;
+			this.energy = (int) Math.ceil(big_energy);
+			switch(direction){
+			case 0 :
+				offspring.x_coord = (this.x_coord + 1) % Params.world_width;
+			case 1 : 
+				offspring.x_coord = (this.x_coord + 1) % Params.world_width;
+				offspring.y_coord = (this.y_coord - 1);
+				if(offspring.y_coord < 0){
+					offspring.y_coord = Params.world_height - 1;
+				}
+			case 2 :
+				offspring.y_coord = (this.y_coord - 1);
+				if(offspring.y_coord < 0){
+					offspring.y_coord = Params.world_height - 1;
+				}
+			case 3 :
+				offspring.x_coord = (this.x_coord - 1);
+				if(offspring.x_coord < 0){
+					offspring.x_coord = Params.world_width - 1;
+				}
+				offspring.y_coord = (this.y_coord - 1);
+				if(offspring.y_coord < 0){
+					offspring.y_coord = Params.world_height - 1;
+				}
+			case 4 :
+				offspring.x_coord = (this.x_coord - 1);
+				if(offspring.x_coord < 0){
+					offspring.x_coord = Params.world_width - 1;
+				}
+			case 5 :
+				offspring.x_coord = (this.x_coord - 1);
+				if(offspring.x_coord < 0){
+					offspring.x_coord = Params.world_width - 1;
+				}
+				offspring.y_coord = (this.y_coord + 1) % Params.world_height;
+			case 6 :
+				offspring.y_coord = (this.y_coord + 1) % Params.world_height;
+			case 7 :
+				offspring.x_coord = (this.x_coord + 1) % Params.world_width;
+				offspring.y_coord = (this.y_coord + 1) % Params.world_height;
+			default : 
+				offspring.x_coord = this.x_coord;
+				offspring.y_coord = this.y_coord;
+			}
+		}
+		/* Add the baby to his/her respective cradle */
+		babies.add(offspring);
 	}
 
 	public abstract void doTimeStep();
