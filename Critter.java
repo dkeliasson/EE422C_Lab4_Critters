@@ -61,17 +61,20 @@ public abstract class Critter {
 		switch(direction){
 		case 0 :
 			x_coord = (x_coord + 1) % Params.world_width;
+			break;
 		case 1 : 
 			x_coord = (x_coord + 1) % Params.world_width;
 			y_coord = (y_coord - 1);
 			if(y_coord < 0){
 				y_coord = Params.world_height - 1;
 			}
+			break;
 		case 2 :
 			y_coord = (y_coord - 1);
 			if(y_coord < 0){
 				y_coord = Params.world_height - 1;
 			}
+			break;
 		case 3 :
 			x_coord = (x_coord - 1);
 			if(x_coord < 0){
@@ -81,25 +84,31 @@ public abstract class Critter {
 			if(y_coord < 0){
 				y_coord = Params.world_height - 1;
 			}
+			break;
 		case 4 :
 			x_coord = (x_coord - 1);
 			if(x_coord < 0){
 				x_coord = Params.world_width - 1;
 			}
+			break;
 		case 5 :
 			x_coord = (x_coord - 1);
 			if(x_coord < 0){
 				x_coord = Params.world_width - 1;
 			}
 			y_coord = (y_coord + 1) % Params.world_height;
+			break;
 		case 6 :
 			y_coord = (y_coord + 1) % Params.world_height;
+			break;
 		case 7 :
 			x_coord = (x_coord + 1) % Params.world_width;
 			y_coord = (y_coord + 1) % Params.world_height;
+			break;
 		default : 
 			x_coord = x_coord;
 			y_coord = y_coord;
+			break;
 		}
 		energy -= Params.walk_energy_cost;
 	}
@@ -112,17 +121,20 @@ public abstract class Critter {
 		switch(direction){
 		case 0 :
 			x_coord = (x_coord + 2) % Params.world_width;
+			break;
 		case 1 : 
 			x_coord = (x_coord + 2) % Params.world_width;
 			y_coord = (y_coord - 2);
 			if(y_coord < 0){
 				y_coord = Params.world_height - 2;
 			}
+			break;
 		case 2 :
 			y_coord = (y_coord - 2);
 			if(y_coord < 0){
 				y_coord = Params.world_height - 2;
 			}
+			break;
 		case 3 :
 			x_coord = (x_coord - 2);
 			if(x_coord < 0){
@@ -132,25 +144,31 @@ public abstract class Critter {
 			if(y_coord < 0){
 				y_coord = Params.world_height - 2;
 			}
+			break;
 		case 4 :
 			x_coord = (x_coord - 2);
 			if(x_coord < 0){
 				x_coord = Params.world_width - 2;
 			}
+			break;
 		case 5 :
 			x_coord = (x_coord - 2);
 			if(x_coord < 0){
 				x_coord = Params.world_width - 2;
 			}
 			y_coord = (y_coord + 2) % Params.world_height;
+			break;
 		case 6 :
 			y_coord = (y_coord + 2) % Params.world_height;
+			break;
 		case 7 :
 			x_coord = (x_coord + 2) % Params.world_width;
 			y_coord = (y_coord + 2) % Params.world_height;
+			break;
 		default : 
 			x_coord = x_coord;
 			y_coord = y_coord;
+			break;
 		}
 		energy -= Params.run_energy_cost;
 	}
@@ -226,9 +244,8 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
-		/* Prepend package to name */
+		/* Prepend package to string*/
 		String newClass = myPackage + "." + critter_class_name;
-		
 		/* Creating class template for a Class of critters */
 		Class<?> Bug;
 		/* Attempt to initialize class, if not found throw exception */
@@ -255,8 +272,8 @@ public abstract class Critter {
 		}
 		
 		Critter crit = (Critter)instanceofBug;
-		crit.x_coord = getRandomInt(Params.world_width);
-		crit.y_coord = getRandomInt(Params.world_height);
+		crit.x_coord = getRandomInt(Params.world_width - 1);
+		crit.y_coord = getRandomInt(Params.world_height - 1);
 		crit.energy = Params.start_energy;
 		population.add(crit);
 		
@@ -407,112 +424,42 @@ public abstract class Critter {
 		Critter b;
 		for(int row = 0; row < Params.world_height; row++){
 			for(int col = 0; col < Params.world_width; col++){
+				if(ourworld[row][col].size() > 1){
 
-					/* More than 1 critter in coordinate */
-					/* We must battle */
-					/* Pull out 2 critters for battle(hopefully) */
-					a = (Critter)ourworld[row][col].get(0);
-					b = (Critter)ourworld[row][col].get(1);
-					
-					
-					
-					/* Resolve any conflict */
-					/* FIGHT TIME */
-					/* LETS ROCK THIS */
-					/* Check first if either has moved to keep track of in case one attempts to run */
-					boolean Amoved = a.hasMoved;
-					boolean Bmoved = b.hasMoved;
-					
-					/* Hold each critters energy to replace if they come back to fight */
-					int Aenergy = a.energy;
-					int Benergy = b.energy;
-					
-					/* Now we fight? */
-					boolean fight_choiceA = a.fight(b.toString());
-					boolean fight_choiceB = b.fight(a.toString());
-					
-					/* Both chose to duke it out */
-					if(fight_choiceA && fight_choiceB){
-						int rollA = Critter.getRandomInt(a.energy);
-						int rollB = Critter.getRandomInt(b.energy);
-						if(rollA >= rollB){
-							if(a.energy <= 0){}
-							else{
-								a.energy += (b.energy/2);
-								b.energy = 0;
-								ourworld[row][col].remove(1);
-							}
-						}
-						else{
-							b.energy += (a.energy/2);
-							a.energy = 0;
-							ourworld[row][col].remove(0);
-						}
-					}
-					/* B wants to run away */
-					else if(fight_choiceA && !fight_choiceB){
-						/* if b moved prior to fight then no choice but to fight */
-						if(Bmoved){
-							a.energy += (b.energy/2);
-							b.energy = 0;
-							ourworld[row][col].remove(1);
-						}
-						/* else if b moved during call to fight check that it didn't move to occupied place */
-						else if(!Bmoved && b.hasMoved){
-							/* Check to see if place that b moved to is populated already */
-							boolean populated = false;
-							for(i = 0; i < population.size(); i++){
-								if((b.x_coord == population.get(i).x_coord) && (b.y_coord == population.get(i).y_coord)){
-									populated = true;
-								}
-							}
-							/* if b moved to populated coordinate then they fight */
-							if(populated){
-								a.energy += (Benergy/2);
-								b.energy = 0;
-								ourworld[row][col].remove(1);
-							}
-							else{}
-						}					
-					}
-					/* A wants to run away */
-					else if(!fight_choiceA && fight_choiceB){
-						/* if a moved prior to fight then no choice but to fight */
-						if(Amoved){
-							int rollA = Critter.getRandomInt(a.energy);
-							int rollB = Critter.getRandomInt(b.energy);
-							if(rollA >= rollB){
-								if(a.energy <= 0){}
-								else{
-									a.energy += (b.energy/2);
-									b.energy = 0;
-									ourworld[row][col].remove(1);
-								}
-							}
-							else{
-								b.energy += (a.energy/2);
-								a.energy = 0;
-								ourworld[row][col].remove(0);
-							}
-						}
-						/* else if a moved during call to fight check that it didn't move to occupied place */
-						else if(!Amoved && a.hasMoved){
-							/* Check to see if place that b moved to is populated already */
-							boolean populated = false;
-							for(i = 0; i < population.size(); i++){
-								if((a.x_coord == population.get(i).x_coord) && (a.y_coord == population.get(i).y_coord)){
-									populated = true;
-								}
-							}
-							/* if a moved to populated coordinate then they fight */
-							if(populated){
+							/* More than 1 critter in coordinate */
+							/* We must battle */
+							/* Pull out 2 critters for battle(hopefully) */
+							a = (Critter)ourworld[row][col].get(0);
+							b = (Critter)ourworld[row][col].get(1);
+							
+							
+							
+							/* Resolve any conflict */
+							/* FIGHT TIME */
+							/* LETS ROCK THIS */
+							/* Check first if either has moved to keep track of in case one attempts to run */
+							boolean Amoved = a.hasMoved;
+							boolean Bmoved = b.hasMoved;
+							
+							/* Hold each critters energy to replace if they come back to fight */
+							int Aenergy = a.energy;
+							int Benergy = b.energy;
+							
+							/* Now we fight? */
+							boolean fight_choiceA = a.fight(b.toString());
+							boolean fight_choiceB = b.fight(a.toString());
+							
+							/* Both chose to duke it out */
+							if(fight_choiceA && fight_choiceB){
 								int rollA = Critter.getRandomInt(a.energy);
 								int rollB = Critter.getRandomInt(b.energy);
 								if(rollA >= rollB){
-									a.energy = Aenergy;
-									a.energy += (b.energy/2);
-									b.energy = 0;
-									ourworld[row][col].remove(1);
+									if(a.energy <= 0){}
+									else{
+										a.energy += (b.energy/2);
+										b.energy = 0;
+										ourworld[row][col].remove(1);
+									}
 								}
 								else{
 									b.energy += (a.energy/2);
@@ -520,51 +467,124 @@ public abstract class Critter {
 									ourworld[row][col].remove(0);
 								}
 							}
-							else{}
-						}		
+							/* B wants to run away */
+							else if(fight_choiceA && !fight_choiceB){
+								/* if b moved prior to fight then no choice but to fight */
+								if(Bmoved){
+									a.energy += (b.energy/2);
+									b.energy = 0;
+									ourworld[row][col].remove(1);
+								}
+								/* else if b moved during call to fight check that it didn't move to occupied place */
+								else if(!Bmoved && b.hasMoved){
+									/* Check to see if place that b moved to is populated already */
+									boolean populated = false;
+									for(i = 0; i < population.size(); i++){
+										if((b.x_coord == population.get(i).x_coord) && (b.y_coord == population.get(i).y_coord)){
+											populated = true;
+										}
+									}
+									/* if b moved to populated coordinate then they fight */
+									if(populated){
+										a.energy += (Benergy/2);
+										b.energy = 0;
+										ourworld[row][col].remove(1);
+									}
+									else{}
+								}					
+							}
+							/* A wants to run away */
+							else if(!fight_choiceA && fight_choiceB){
+								/* if a moved prior to fight then no choice but to fight */
+								if(Amoved){
+									int rollA = Critter.getRandomInt(a.energy);
+									int rollB = Critter.getRandomInt(b.energy);
+									if(rollA >= rollB){
+										if(a.energy <= 0){}
+										else{
+											a.energy += (b.energy/2);
+											b.energy = 0;
+											ourworld[row][col].remove(1);
+										}
+									}
+									else{
+										b.energy += (a.energy/2);
+										a.energy = 0;
+										ourworld[row][col].remove(0);
+									}
+								}
+								/* else if a moved during call to fight check that it didn't move to occupied place */
+								else if(!Amoved && a.hasMoved){
+									/* Check to see if place that b moved to is populated already */
+									boolean populated = false;
+									for(i = 0; i < population.size(); i++){
+										if((a.x_coord == population.get(i).x_coord) && (a.y_coord == population.get(i).y_coord)){
+											populated = true;
+										}
+									}
+									/* if a moved to populated coordinate then they fight */
+									if(populated){
+										int rollA = Critter.getRandomInt(a.energy);
+										int rollB = Critter.getRandomInt(b.energy);
+										if(rollA >= rollB){
+											a.energy = Aenergy;
+											a.energy += (b.energy/2);
+											b.energy = 0;
+											ourworld[row][col].remove(1);
+										}
+										else{
+											b.energy += (a.energy/2);
+											a.energy = 0;
+											ourworld[row][col].remove(0);
+										}
+									}
+									else{}
+								}		
+							}
+							/* else they both are babies and want to run away crying */
+							else{
+								/* Check all possible combinations of A and B movements */
+								
+							}
 					}
-					/* else they both are babies and want to run away crying */
-					else{
-						/* Check all possible combinations of A and B movements */
-						
-					}		
 				}	
-				/* Refresh Algae */
-				int count = Params.refresh_algae_count;
-				while(count != 0){
-					critter = new Algae();
-					critter.energy = Params.start_energy;
-					/* Assign a random position */
-					critter.x_coord = getRandomInt(Params.world_width - 1);
-					critter.y_coord = getRandomInt(Params.world_height - 1);
-					/* Add this guy to the population */
-					population.add(critter);
-				}
-					
-					
-				/* Add any new offspring to collection */
-				for(int j = 0; j < babies.size(); j++){
-					population.add(babies.get(j));
-					babies.remove(j);
-				}
-				
-				/* Deduct rest energy */
-				for(int m = 0; m < population.size(); m++){
-					population.get(m).energy -= Params.rest_energy_cost;
-				}
-				
-				/* Clear all dead critters */
-				for(int k = 0; k < population.size(); k++){
-					if(population.get(k).energy <= 0){
-						population.remove(k);
-					}
-				}
-				
-				/* Set all critters move field back to false */
-				for(int l = 0; l < population.size(); l++){
-					population.get(l).hasMoved = false;
-				}
 			}
+		/* Refresh Algae */
+		int count = Params.refresh_algae_count;
+		while(count != 0){
+			critter = new Algae();
+			critter.energy = Params.start_energy;
+			/* Assign a random position */
+			critter.x_coord = getRandomInt(Params.world_width - 1);
+			critter.y_coord = getRandomInt(Params.world_height - 1);
+			/* Add this guy to the population */
+			population.add(critter);
+			count--;
+		}
+			
+			
+		/* Add any new offspring to collection */
+		for(int j = 0; j < babies.size(); j++){
+			population.add(babies.get(j));
+			babies.remove(j);
+		}
+		
+		/* Deduct rest energy */
+		for(int m = 0; m < population.size(); m++){
+			population.get(m).energy -= Params.rest_energy_cost;
+		}
+		
+		/* Clear all dead critters */
+		for(int k = 0; k < population.size(); k++){
+			if(population.get(k).energy <= 0){
+				population.remove(k);
+			}
+		}
+		
+		/* Set all critters move field back to false */
+		for(int l = 0; l < population.size(); l++){
+			population.get(l).hasMoved = false;
+		}
 		}
 	
 	
@@ -587,7 +607,7 @@ public abstract class Critter {
 	public static void displayWorld() {
 		createBorder();
 		constructWorld();
-		for(int row = 1; row < Params.world_height + 1; row++){
+		for(int row = 1; row < Params.world_height; row++){
 			for (int col = 0; col < Params.world_width + 2; col++){			
 				if(col == 0){
 					System.out.print("|");
@@ -596,12 +616,12 @@ public abstract class Critter {
 					System.out.println("|");
 				}
 				/* If population array is empty means no critter to print */
-				else if (ourworld[row - 1][col - 1].size() == 0){
+				else if (ourworld[row][col - 1].size() == 0){
 					System.out.print(" ");
 				}
 				/* Critter availabe so print the first critter in array */
 				else{
-					System.out.print(ourworld[row - 1][col - 1].get(0).toString());
+					System.out.print(ourworld[row][col-1].get(0).toString());
 				}
 			}	
 		}
