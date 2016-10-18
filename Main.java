@@ -79,6 +79,7 @@ public class Main {
 	        /* Write your code below. */
 	        String error = "error processing: ";
 	      
+	        main_loop:
 	        while(true){
 	        	/**
 	        	 * Commands:
@@ -106,7 +107,7 @@ public class Main {
 	            		System.out.println(input[input.length - 1]);
 	        		}
 	        		else{
-	        			System.exit(0);
+	        			break main_loop;
 	        		} 
 	        		break;
 	        	case show : 
@@ -205,38 +206,22 @@ public class Main {
 	    				System.out.println(input[input.length - 1]);
 	        		}
 	        		break;
-	//        	case stats :
-	//        		Class<?> Bug;
-	//        		/* Use Java Reflection to qualify name */
-	//        		try{
-	//        			Bug = Class.forName(input[1]);
-	//        		}catch(ClassNotFoundException e){
-	//        			System.out.print(error);
-	//        			for(int i = 0; i < input.length - 1; i++){
-	//            			System.out.print(input[i] + " ");
-	//            		}
-	//            		System.out.print(input[input.length - 1]);
-	//        		}
-	//        		try{
-	//        			Critter.getInstances(input[1]);
-	//        		}catch (InvalidCritterException e){
-	//        			System.out.print(error);
-	//        			for(int i = 0; i < input.length - 1; i++){
-	//            			System.out.print(input[i] + " ");
-	//            		}
-	//            		System.out.print(input[input.length - 1]);
-	//        		}
-	//        		Class<?>[] types = {List.class};
-	//        		try {                
-	//        	        Method m = Bug.getMethod("runStats", types);    
-	//        		}catch(NoSuchMethodException | SecurityException e){
-	//        			System.out.print(error);
-	//        			for(int i = 0; i < input.length - 1; i++){
-	//            			System.out.print(input[i] + " ");
-	//            		}
-	//            		System.out.print(input[input.length - 1]);
-	//        		}
-	//        		m.invoke(null, types);     		
+	        	case stats :
+	        		Class<?> Bug;
+	        		/* Use Java Reflection to qualify name */
+	        		try{
+	        			Bug = Class.forName(myPackage + "." + input[1]);	        			        	
+	        			List<Critter> critters = Critter.getInstances(input[1]);	        			        			
+	        			Critter crit = (Critter)Bug.newInstance();	        		            
+	        	        Method m = Bug.getMethod("runStats", List.class); 
+	        	        m.invoke(crit, critters);
+	        		}catch (Exception e){
+	        			System.out.print(error);
+	        			for(int i = 0; i < input.length - 1; i++){
+	            			System.out.print(input[i] + " ");
+	            		}
+	            		System.out.print(input[input.length - 1]);
+	        		}	        		
 	        	default :
 	        		System.out.print("invalid command: ");
 	        		for(int i = 0; i < input.length - 1; i++){
