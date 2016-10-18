@@ -607,7 +607,7 @@ public abstract class Critter {
 	public static void displayWorld() {
 		createBorder();
 		constructWorld();
-		for(int row = 1; row < Params.world_height; row++){
+		for(int row = 1; row < Params.world_height + 1; row++){
 			for (int col = 0; col < Params.world_width + 2; col++){			
 				if(col == 0){
 					System.out.print("|");
@@ -616,12 +616,12 @@ public abstract class Critter {
 					System.out.println("|");
 				}
 				/* If population array is empty means no critter to print */
-				else if (ourworld[row][col - 1].size() == 0){
+				else if (ourworld[row - 1][col - 1].size() == 0){
 					System.out.print(" ");
 				}
 				/* Critter availabe so print the first critter in array */
 				else{
-					System.out.print(ourworld[row][col-1].get(0).toString());
+					System.out.print(ourworld[row - 1][col - 1].get(0).toString());
 				}
 			}	
 		}
