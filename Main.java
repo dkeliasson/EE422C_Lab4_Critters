@@ -13,6 +13,7 @@
 package assignment4; // cannot be in default package
 import java.util.*;
 import java.io.*;
+import java.lang.reflect.Method;
 
 
 /*
@@ -36,6 +37,7 @@ public class Main {
     private static final String seed = "seed";
     private static final String make = "make";
     private static final String stats = "stats";
+    
 
     // Gets the package name.  The usage assumes that Critter and its subclasses are all in the same package.
     static {
@@ -71,76 +73,180 @@ public class Main {
             }
         } else { // if no arguments to main
             kb = new Scanner(System.in); // use keyboard and console
-        }
+       
 
-        /* Do not alter the code above for your submission. */
-        /* Write your code below. */
-        
-        while(true){
-        	/**
-        	 * Commands:
-        	 * 		quit
-        	 * 		show
-        	 * 		seed
-        	 * 		step
-        	 * 		make
-        	 * 		stats	
-        	 */
-        	
-        	System.out.println("critters> ");
-        	
-        	/* Get input */
-        	String[] input = kb.nextLine().trim().split(" ");
-        	
-        	/* Decide what to do */
-        	switch(input[0]){
-        	case quit : 
-        		System.exit(0);
-        	case show : 
-        		Critter.displayWorld();
-        	case step :
-        		if(input.length > 1){
-        			int steps = Integer.parseInt(input[1]);
-        			for(int i = 0; i < steps; i++){
-        				Critter.worldTimeStep();
-        			}
-        		}
-        		else{
-        			Critter.worldTimeStep();
-        		}
-        	case seed :
-        		long random = Long.parseLong(input[1]);
-        		Critter.setSeed(random);
-        	case make :
-        		if(input.length == 2){
-        			try{
-        				Critter.makeCritter(input[1]);
-        			}catch (InvalidCritterException e){
-        				e.printStackTrace();
-        			}
-        		}
-        		else if(input.length == 3){
-        			int value = Integer.parseInt(input[2]);
-        			for(int count = 0; count < value; count++){
-        				try{
-            				Critter.makeCritter(input[1]);
-            			}catch (InvalidCritterException e){
-            				e.printStackTrace();
-            			}
-        			}
-        		}
-        	case stats :
-        		
-        	default :
-        		
-        	}
-        	
-        }
-        
-        System.out.println("GLHF");
-        
-        /* Write your code above */
-        System.out.flush();
-
+	        /* Do not alter the code above for your submission. */
+	        /* Write your code below. */
+	        String error = "error processing: ";
+	      
+	        while(true){
+	        	/**
+	        	 * Commands:
+	        	 * 		quit
+	        	 * 		show
+	        	 * 		seed
+	        	 * 		step
+	        	 * 		make
+	        	 * 		stats	
+	        	 */
+	        	
+	        	System.out.print("critters> ");
+	        	
+	        	/* Get input */
+	        	String[] input = kb.nextLine().split(" ");
+	        	
+	        	/* Decide what to do */
+	        	switch(input[0]){
+	        	case quit :
+	        		if(input.length > 1){
+	        			System.out.print(error);
+	    				for(int i = 0; i < input.length - 1; i++){
+	            			System.out.print(input[i] + " ");
+	            		}
+	            		System.out.println(input[input.length - 1]);
+	        		}
+	        		else{
+	        			System.exit(0);
+	        		} 
+	        		break;
+	        	case show : 
+	        		if(input.length > 1){
+	        			System.out.print(error);
+	    				for(int i = 0; i < input.length - 1; i++){
+	            			System.out.print(input[i] + " ");
+	            		}
+	    				System.out.println(input[input.length - 1]);
+	        		}
+	        		else{
+	        			Critter.displayWorld();
+	        		} 
+	        		break;
+	        	case step :
+	        		if(input.length > 2){
+	        			System.out.print(error);
+	    				for(int i = 0; i < input.length - 1; i++){
+	            			System.out.print(input[i] + " ");
+	            		}
+	    				System.out.println(input[input.length - 1]);
+	        		}
+	        		else if(input.length > 1){
+	        			int steps = 0;
+	        			try{
+	        				steps = Integer.parseInt(input[1]);
+	        			}catch (NumberFormatException e){
+	        				System.out.print(error);
+	        				for(int i = 0; i < input.length - 1; i++){
+	                			System.out.print(input[i] + " ");
+	                		}
+	        				System.out.println(input[input.length - 1]);
+	        			}
+	        			for(int i = 0; i < steps; i++){
+	        				Critter.worldTimeStep();
+	        			}
+	        		}
+	        		else{
+	        			Critter.worldTimeStep();
+	        		}
+	        		break;
+	        	case seed :
+	        		if(input.length > 2){
+	        			System.out.print(error);
+	    				for(int i = 0; i < input.length - 1; i++){
+	            			System.out.print(input[i] + " ");
+	            		}
+	    				System.out.println(input[input.length - 1]);
+	        		}
+	        		else{
+		        		long random = 0;
+		        		try{
+		        			random = Long.parseLong(input[1]);
+		        		}catch (NumberFormatException e){
+		        			System.out.print(error);
+		        			for(int i = 0; i < input.length - 1; i++){
+		            			System.out.print(input[i] + " ");
+		            		}
+		        			System.out.println(input[input.length - 1]);
+		        		}
+		        		Critter.setSeed(random);
+	        		}
+	        		break;
+	        	case make :
+	        		
+	        		if(input.length == 2){
+	        			try{
+	        				Critter.makeCritter(input[1]);
+	        			}catch (InvalidCritterException e){
+	        				System.out.print(error);
+	        				for(int i = 0; i < input.length - 1; i++){
+	                			System.out.print(input[i] + " ");
+	                		}
+	        				System.out.println(input[input.length - 1]);
+	        			}
+	        		}
+	        		else if(input.length == 3){
+	        			int value = Integer.parseInt(input[2]);
+	        			for(int count = 0; count < value; count++){
+	        				try{
+	            				Critter.makeCritter(input[1]);
+	            			}catch (InvalidCritterException e){
+	            				System.out.print(error);
+	            				for(int i = 0; i < input.length - 1; i++){
+	                    			System.out.print(input[i] + " ");
+	                    		}
+	            				System.out.println(input[input.length - 1]);
+	            			}
+	        			}
+	        		}
+	        		else{
+	        			System.out.print(error);
+	    				for(int i = 0; i < input.length - 1; i++){
+	            			System.out.print(input[i] + " ");
+	            		}
+	    				System.out.println(input[input.length - 1]);
+	        		}
+	        		break;
+	//        	case stats :
+	//        		Class<?> Bug;
+	//        		/* Use Java Reflection to qualify name */
+	//        		try{
+	//        			Bug = Class.forName(input[1]);
+	//        		}catch(ClassNotFoundException e){
+	//        			System.out.print(error);
+	//        			for(int i = 0; i < input.length - 1; i++){
+	//            			System.out.print(input[i] + " ");
+	//            		}
+	//            		System.out.print(input[input.length - 1]);
+	//        		}
+	//        		try{
+	//        			Critter.getInstances(input[1]);
+	//        		}catch (InvalidCritterException e){
+	//        			System.out.print(error);
+	//        			for(int i = 0; i < input.length - 1; i++){
+	//            			System.out.print(input[i] + " ");
+	//            		}
+	//            		System.out.print(input[input.length - 1]);
+	//        		}
+	//        		Class<?>[] types = {List.class};
+	//        		try {                
+	//        	        Method m = Bug.getMethod("runStats", types);    
+	//        		}catch(NoSuchMethodException | SecurityException e){
+	//        			System.out.print(error);
+	//        			for(int i = 0; i < input.length - 1; i++){
+	//            			System.out.print(input[i] + " ");
+	//            		}
+	//            		System.out.print(input[input.length - 1]);
+	//        		}
+	//        		m.invoke(null, types);     		
+	        	default :
+	        		System.out.print("invalid command: ");
+	        		for(int i = 0; i < input.length - 1; i++){
+	        			System.out.print(input[i] + " ");
+	        		}
+	        		System.out.println(input[input.length - 1]);
+	        		break;
+	        	}
+	        	
+	        }
+	     }
     }
 }
