@@ -448,6 +448,8 @@ public abstract class Critter {
 							/* Hold each critters energy to replace if they come back to fight */
 							int Aenergy = a.energy;
 							int Benergy = b.energy;
+							int[] Acoord = {a.x_coord,a.y_coord};
+							int[] Bcoord = {b.x_coord,b.y_coord};
 							
 							/* Now we fight? */
 							boolean fight_choiceA = a.fight(b.toString());
@@ -482,6 +484,7 @@ public abstract class Critter {
 								else if(!Bmoved && b.hasMoved){
 									/* Check to see if place that b moved to is populated already */
 									boolean populated = false;
+									population.remove(population.indexOf(b));
 									for(i = 0; i < population.size(); i++){
 										if((b.x_coord == population.get(i).x_coord) && (b.y_coord == population.get(i).y_coord)){
 											populated = true;
@@ -489,11 +492,16 @@ public abstract class Critter {
 									}
 									/* if b moved to populated coordinate then they fight */
 									if(populated){
-										a.energy += (Benergy/2);
-										b.energy = 0;
-										ourworld[row][col].remove(1);
+										if(a.energy >= 0 && b.energy >= 0){
+											a.energy += (Benergy/2);
+											b.energy = 0;
+											ourworld[row][col].remove(1);
+										}
 									}
-									else{}
+									else{
+										/* Add b back into population */
+										population.add(b);
+									}
 								}
 								else{
 									if(a.energy >= 0 && b.energy >= 0){
@@ -518,26 +526,16 @@ public abstract class Critter {
 							/* A wants to run away */
 							else if(!fight_choiceA && fight_choiceB){
 								/* if a moved prior to fight then no choice but to fight */
-								if(Amoved){
-									if(a.energy >= 0 && b.energy >= 0){
-										int rollA = Critter.getRandomInt(a.energy);
-										int rollB = Critter.getRandomInt(b.energy);
-										if(rollA >= rollB){																					
-											a.energy += (b.energy/2);
-											b.energy = 0;
-											ourworld[row][col].remove(1);											
-										}
-										else{
-											b.energy += (a.energy/2);
-											a.energy = 0;
-											ourworld[row][col].remove(0);
-										}
-									}
+								if(Amoved){																														
+									b.energy += (a.energy/2);
+									a.energy = 0;
+									ourworld[row][col].remove(0);									
 								}
 								/* else if a moved during call to fight check that it didn't move to occupied place */
 								else if(!Amoved && a.hasMoved){
 									/* Check to see if place that b moved to is populated already */
 									boolean populated = false;
+									population.remove(population.indexOf(a));
 									for(i = 0; i < population.size(); i++){
 										if((a.x_coord == population.get(i).x_coord) && (a.y_coord == population.get(i).y_coord)){
 											populated = true;
@@ -546,23 +544,16 @@ public abstract class Critter {
 									/* if a moved to populated coordinate then they fight */
 									if(populated){
 										if(a.energy >= 0 && b.energy >= 0){
-											int rollA = Critter.getRandomInt(a.energy);
-											int rollB = Critter.getRandomInt(b.energy);
-											if(rollA >= rollB){
-												a.energy = Aenergy;
-												a.energy += (b.energy/2);
-												b.energy = 0;
-												ourworld[row][col].remove(1);
-											}
-											else{
-												b.energy += (a.energy/2);
-												a.energy = 0;
-												ourworld[row][col].remove(0);
-											}
+											b.energy += (a.energy/2);
+											a.energy = 0;
+											ourworld[row][col].remove(0);									
 										}
 									}
-									else{}
+									else{
+										population.add(a);
+									}
 								}
+								/* No one moved ever */
 								else{
 									if(a.energy >= 0 && b.energy >= 0){
 										int rollA = Critter.getRandomInt(a.energy);
@@ -586,6 +577,40 @@ public abstract class Critter {
 							/* else they both are babies and want to run away crying */
 							else{
 								/* Check all possible combinations of A and B movements */
+								/* Both are algae so get rid of one */
+								if(a.toString() == "@" && b.toString() == "@"){
+									a.energy = 0;
+									ourworld[row][col].remove(0);
+									
+								}
+									/* else if a moved during call to fight check that it didn't move to occupied place */
+								else if(!Amoved && a.hasMoved){
+									/* Check to see if place that b moved to is populated already */								
+									population.remove(population.indexOf(a));
+									for(i = 0; i < population.size(); i++){
+										if((a.x_coord == population.get(i).x_coord) && (a.y_coord == population.get(i).y_coord)){
+											a.x_coord = Acoord[0];
+											a.y_coord = Acoord[1];
+										}
+									}
+									population.add(a);
+									
+								}
+								else if(!Bmoved && b.hasMoved){								
+									population.remove(population.indexOf(b));
+									for(i = 0; i < population.size(); i++){
+										if((b.x_coord == population.get(i).x_coord) && (b.y_coord == population.get(i).y_coord)){
+											b.x_coord = Bcoord[0];
+											b.y_coord = Bcoord[1];
+										}
+									}
+									population.add(b);
+								}
+								if(a.x_coord == b.x_coord && a.y_coord == b.y_coord){
+									b.energy += a.energy/2;
+									a.energy = 0;
+									ourworld[row][col].remove(a);
+								}
 								
 							}
 					}
