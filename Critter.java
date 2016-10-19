@@ -413,6 +413,7 @@ public abstract class Critter {
 	public static void clearWorld() {
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void worldTimeStep() {
 		/* Iterate through every critter and invoke the doTimeStep method */
 		Critter critter;
@@ -616,16 +617,25 @@ public abstract class Critter {
 					}
 				}	
 			}
+		
+		/* Deduct rest energy */
+		for(int m = 0; m < population.size(); m++){
+			population.get(m).energy -= Params.rest_energy_cost;
+		}
+		
+		
+		
 		/* Refresh Algae */
 		int count = Params.refresh_algae_count;
 		while(count != 0){
 			critter = new Algae();
 			critter.energy = Params.start_energy;
 			/* Assign a random position */
-			critter.x_coord = getRandomInt(Params.world_width - 1);
-			critter.y_coord = getRandomInt(Params.world_height - 1);
+			critter.x_coord = getRandomInt(Params.world_width);
+			critter.y_coord = getRandomInt(Params.world_height);
 			/* Add this guy to the population */
 			population.add(critter);
+			ourworld[critter.x_coord][critter.y_coord].add(critter);
 			count--;
 		}
 			
@@ -636,10 +646,7 @@ public abstract class Critter {
 			babies.remove(j);
 		}
 		
-		/* Deduct rest energy */
-		for(int m = 0; m < population.size(); m++){
-			population.get(m).energy -= Params.rest_energy_cost;
-		}
+		
 		
 		/* Clear all dead critters */
 		for(int k = 0; k < population.size(); k++){
