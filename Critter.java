@@ -110,6 +110,7 @@ public abstract class Critter {
 			y_coord = y_coord;
 			break;
 		}
+		this.hasMoved = true;
 		energy -= Params.walk_energy_cost;
 	}
 	
@@ -170,6 +171,7 @@ public abstract class Critter {
 			y_coord = y_coord;
 			break;
 		}
+		this.hasMoved = true;
 		energy -= Params.run_energy_cost;
 	}
 	
@@ -272,8 +274,8 @@ public abstract class Critter {
 		}
 		
 		Critter crit = (Critter)instanceofBug;
-		crit.x_coord = getRandomInt(Params.world_width - 1);
-		crit.y_coord = getRandomInt(Params.world_height - 1);
+		crit.x_coord = getRandomInt(Params.world_width);
+		crit.y_coord = getRandomInt(Params.world_height);
 		crit.energy = Params.start_energy;
 		population.add(crit);
 		
@@ -286,15 +288,17 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
+		/* Prepend package to string*/
+		String newClass = myPackage + "." + critter_class_name;
 		List<Critter> result = new java.util.ArrayList<Critter>();
-		if(!critter_class_name.equals("Critter")){
+		if(!newClass.equals(myPackage + "." + "Critter")){
 			/* Creating class template for a Class of critters */
 			Class<?> Bug;
 			/* Attempt to initialize class, if not found throw exception */
 			try{
-				Bug = Class.forName(critter_class_name);
+				Bug = Class.forName(newClass);
 			}catch(ClassNotFoundException e){
-				throw new InvalidCritterException(critter_class_name);
+				throw new InvalidCritterException(newClass);
 			}
 			/* Declaring constructor */
 			Constructor<?> construct = null;
@@ -424,7 +428,7 @@ public abstract class Critter {
 		Critter b;
 		for(int row = 0; row < Params.world_height; row++){
 			for(int col = 0; col < Params.world_width; col++){
-				if(ourworld[row][col].size() > 1){
+				while(ourworld[row][col].size() > 1){
 
 							/* More than 1 critter in coordinate */
 							/* We must battle */
@@ -451,20 +455,19 @@ public abstract class Critter {
 							
 							/* Both chose to duke it out */
 							if(fight_choiceA && fight_choiceB){
-								int rollA = Critter.getRandomInt(a.energy);
-								int rollB = Critter.getRandomInt(b.energy);
-								if(rollA >= rollB){
-									if(a.energy <= 0){}
-									else{
+								if(a.energy >= 0 && b.energy >= 0){
+									int rollA = Critter.getRandomInt(a.energy);
+									int rollB = Critter.getRandomInt(b.energy);
+									if(rollA >= rollB){
 										a.energy += (b.energy/2);
 										b.energy = 0;
 										ourworld[row][col].remove(1);
 									}
-								}
-								else{
-									b.energy += (a.energy/2);
-									a.energy = 0;
-									ourworld[row][col].remove(0);
+									else{
+										b.energy += (a.energy/2);
+										a.energy = 0;
+										ourworld[row][col].remove(0);
+									}
 								}
 							}
 							/* B wants to run away */
@@ -491,26 +494,44 @@ public abstract class Critter {
 										ourworld[row][col].remove(1);
 									}
 									else{}
-								}					
+								}
+								else{
+									if(a.energy >= 0 && b.energy >= 0){
+										int rollA = Critter.getRandomInt(a.energy);
+										int rollB = Critter.getRandomInt(b.energy);
+										if(b.toString() == "@"){
+											rollB = 0;
+										}
+										if(rollA >= rollB){								
+											a.energy += (b.energy/2);
+											b.energy = 0;
+											ourworld[row][col].remove(1);											
+										}
+										else{
+											b.energy += (a.energy/2);
+											a.energy = 0;
+											ourworld[row][col].remove(0);
+										}
+									}
+								}
 							}
 							/* A wants to run away */
 							else if(!fight_choiceA && fight_choiceB){
 								/* if a moved prior to fight then no choice but to fight */
 								if(Amoved){
-									int rollA = Critter.getRandomInt(a.energy);
-									int rollB = Critter.getRandomInt(b.energy);
-									if(rollA >= rollB){
-										if(a.energy <= 0){}
-										else{
+									if(a.energy >= 0 && b.energy >= 0){
+										int rollA = Critter.getRandomInt(a.energy);
+										int rollB = Critter.getRandomInt(b.energy);
+										if(rollA >= rollB){																					
 											a.energy += (b.energy/2);
 											b.energy = 0;
-											ourworld[row][col].remove(1);
+											ourworld[row][col].remove(1);											
 										}
-									}
-									else{
-										b.energy += (a.energy/2);
-										a.energy = 0;
-										ourworld[row][col].remove(0);
+										else{
+											b.energy += (a.energy/2);
+											a.energy = 0;
+											ourworld[row][col].remove(0);
+										}
 									}
 								}
 								/* else if a moved during call to fight check that it didn't move to occupied place */
@@ -524,13 +545,35 @@ public abstract class Critter {
 									}
 									/* if a moved to populated coordinate then they fight */
 									if(populated){
+										if(a.energy >= 0 && b.energy >= 0){
+											int rollA = Critter.getRandomInt(a.energy);
+											int rollB = Critter.getRandomInt(b.energy);
+											if(rollA >= rollB){
+												a.energy = Aenergy;
+												a.energy += (b.energy/2);
+												b.energy = 0;
+												ourworld[row][col].remove(1);
+											}
+											else{
+												b.energy += (a.energy/2);
+												a.energy = 0;
+												ourworld[row][col].remove(0);
+											}
+										}
+									}
+									else{}
+								}
+								else{
+									if(a.energy >= 0 && b.energy >= 0){
 										int rollA = Critter.getRandomInt(a.energy);
 										int rollB = Critter.getRandomInt(b.energy);
-										if(rollA >= rollB){
-											a.energy = Aenergy;
+										if(a.toString() == "@"){
+											rollA = 0;
+										}
+										if(rollA >= rollB){																					
 											a.energy += (b.energy/2);
 											b.energy = 0;
-											ourworld[row][col].remove(1);
+											ourworld[row][col].remove(1);										
 										}
 										else{
 											b.energy += (a.energy/2);
@@ -538,8 +581,7 @@ public abstract class Critter {
 											ourworld[row][col].remove(0);
 										}
 									}
-									else{}
-								}		
+								}
 							}
 							/* else they both are babies and want to run away crying */
 							else{
